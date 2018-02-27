@@ -23,10 +23,22 @@ namespace Frontend.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upload(string data)
+        public async Task<IActionResult> Upload(string data)
         {
             string id = null; 
             //TODO: send data in POST request to backend and read returned id value from response
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5000");
+                var content = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("", data)
+                });
+                var result = await client.PostAsync("/api/values", content);
+                id = await result.Content.ReadAsStringAsync();
+
+                Console.WriteLine(id);
+            }
             return Ok(id);
         }
 
